@@ -1,90 +1,217 @@
-# vue-admin-template
+# ice-admin-template
 
-English | [简体中文](./README-zh.md)
+> 这是一个基于 ice(icestark) + vue admin 微前端管理后台。它包含了一个主应用和两个微应用这些搭建微前端后台必要的东西。
 
-> A minimal vue admin template with Element UI & axios & iconfont & permission control & lint
+- 主应用 vue admin + icestark (master 分支)
+- 微应用 react + antd + icestark (react-branch 分支)
+- 微应用 vue2.0 + element + icestark (vue-branch 分支)
 
-**Live demo:** http://panjiachen.github.io/vue-admin-template
+[线上地址](http://panjiachen.github.io/vue-admin-template)
 
+## 相关改造部分
 
-**The current version is `v4.0+` build on `vue-cli`. If you want to use the old version , you can switch branch to [tag/3.11.0](https://github.com/PanJiaChen/vue-admin-template/tree/tag/3.11.0), it does not rely on `vue-cli`**
+```javascript
+<template>
+  <div :class="classObj" class="app-wrapper">
+    <div
+      v-if="device === 'mobile' && sidebar.opened"
+      class="drawer-bg"
+      @click="handleClickOutside"
+    />
+    <sidebar class="sidebar-container" />
+    <div class="main-container">
+      <div :class="{ 'fixed-header': fixedHeader }">
+        <navbar />
+      </div>
+      <!--挂载节点-->
+      <div id="container" v-loading="loading"></div>
+      <app-main v-if="!microAppsActive" />
+    </div>
+  </div>
+</template>
+
+<script>
+import { Navbar, Sidebar, AppMain } from "./components";
+import ResizeMixin from "./mixin/ResizeHandler";
+import { registerMicroApps, removeMicroApps, start } from "@ice/stark";
+export default {
+  name: "Layout",
+  components: {
+    Navbar,
+    Sidebar,
+    AppMain
+  },
+  mixins: [ResizeMixin],
+  data() {
+    return {
+      loading: false,
+      microAppsActive: false
+    };
+  },
+  computed: {
+    sidebar() {
+      return this.$store.state.app.sidebar;
+    },
+    device() {
+      return this.$store.state.app.device;
+    },
+    fixedHeader() {
+      return this.$store.state.settings.fixedHeader;
+    },
+    classObj() {
+      return {
+        hideSidebar: !this.sidebar.opened,
+        openSidebar: this.sidebar.opened,
+        withoutAnimation: this.sidebar.withoutAnimation,
+        mobile: this.device === "mobile"
+      };
+    }
+  },
+  mounted() {
+    //获取挂载节点
+    const container = document.getElementById("container");
+    //注册微应用
+    registerMicroApps([
+      {
+        //微应用名称
+        name: "Reaact",
+        //激活路径
+        activePath: "/react",
+        title: "React微应用",
+        sandbox: true,
+        // React app demo: https://github.com/alibaba-fusion/materials/tree/master/scaffolds/ice-stark-child
+        // url: [
+        //   'https:////iceworks.oss-cn-hangzhou.aliyuncs.com/icestark/child-seller-react/build/js/index.js',
+        //   'https:////iceworks.oss-cn-hangzhou.aliyuncs.com/icestark/child-seller-react/build/css/index.css',
+        // ],
+        //微应用输出地址
+        entry: "http://localhost:3333/",
+        //微应用挂载节点
+        container
+      },
+      {
+        //微应用名称
+        name: "Vue",
+        //激活路径
+        activePath: "/vue",
+        title: "Vue微应用",
+        sandbox: true,
+        // Vue app demo: https://github.com/ice-lab/vue-materials/tree/master/scaffolds/icestark-child-app
+        // url: [
+        //   'https:////iceworks.oss-cn-hangzhou.aliyuncs.com/icestark/child-waiter-vue/dist/js/app.js',
+        //   'https:////iceworks.oss-cn-hangzhou.aliyuncs.com/icestark/child-waiter-vue/dist/css/app.css',
+        // ],
+        //微应用输出地址
+        entry: "http://localhost:7101/",
+        //微应用挂载节点
+        container
+      }
+    ]);
+    //启动微应用
+    start({
+      onLoadingApp: () => {
+        this.loading = true;
+      },
+      onFinishLoading: () => {
+        this.loading = false;
+      },
+      // 处理微应用间跳转无法触发 Vue Router 响应
+      onRouteChange: (_, pathname) => {
+        this.$router.push(pathname);
+      },
+      onActiveApps: activeApps => {
+        this.microAppsActive = (activeApps || []).length ? true : false;
+      }
+    });
+  },
+  //卸载对应的子用
+  beforeDestroy() {
+    removeMicroApps(["Reaact", "Vue"]);
+  },
+  methods: {
+    handleClickOutside() {
+      this.$store.dispatch("app/closeSideBar", { withoutAnimation: false });
+    }
+  }
+};
+</script>
+
+```
+
+## 相关文档
+
+- [vue-element-admin](https://panjiachen.gitee.io/vue-element-admin-site/zh/)
+
+- [ice-icestark](https://micro-frontends.ice.work/)
+
+- [Element UI](https://element.eleme.cn/#/)
+
+- [Ant Design UI](https://ant.design/index-cn)
+
+写了一个系列的教程配套文章，如何从零构建后一个完整的后台项目:
+
+- [手摸手，带你用 vue 撸后台 系列一(基础篇)](https://juejin.im/post/59097cd7a22b9d0065fb61d2)
+- [手摸手，带你用 vue 撸后台 系列二(登录权限篇)](https://juejin.im/post/591aa14f570c35006961acac)
+- [手摸手，带你用 vue 撸后台 系列三 (实战篇)](https://juejin.im/post/593121aa0ce4630057f70d35)
+- [手摸手，带你用 vue 撸后台 系列四(vueAdmin 一个极简的后台基础模板,专门针对本项目的文章,算作是一篇文档)](https://juejin.im/post/595b4d776fb9a06bbe7dba56)
+- [手摸手，带你封装一个 vue component](https://segmentfault.com/a/1190000009090836)
 
 ## Build Setup
 
 ```bash
-# clone the project
-git clone https://github.com/PanJiaChen/vue-admin-template.git
+# 克隆项目
+git clone https://github.com/startLine-05/startLine-05-ice-admin-temp.git
 
-# enter the project directory
-cd vue-admin-template
+# 进入项目目录
+cd ice-admin-template
 
-# install dependency
+# 安装依赖
 npm install
 
-# develop
+# 建议不要直接使用 cnpm 安装以来，会有各种诡异的 bug。可以通过如下操作解决 npm 下载速度慢的问题
+npm install --registry=https://registry.npm.taobao.org
+
+# 启动服务
 npm run dev
 ```
 
-This will automatically open http://localhost:9528
+浏览器访问 [http://localhost:9528](http://localhost:9528)
 
-## Build
+## 发布
 
 ```bash
-# build for test environment
+# 构建测试环境
 npm run build:stage
 
-# build for production environment
+# 构建生产环境
 npm run build:prod
 ```
 
-## Advanced
+## 其它
 
 ```bash
-# preview the release environment effect
+# 预览发布环境效果
 npm run preview
 
-# preview the release environment effect + static resource analysis
+# 预览发布环境效果 + 静态资源分析
 npm run preview -- --report
 
-# code format check
+# 代码格式检查
 npm run lint
 
-# code format check and auto fix
+# 代码格式检查并自动修复
 npm run lint -- --fix
 ```
 
-Refer to [Documentation](https://panjiachen.github.io/vue-element-admin-site/guide/essentials/deploy.html) for more information
+更多信息请参考
 
-## Demo
-
-![demo](https://github.com/PanJiaChen/PanJiaChen.github.io/blob/master/images/demo.gif)
-
-## Extra
-
-If you want router permission && generate menu by user roles , you can use this branch [permission-control](https://github.com/PanJiaChen/vue-admin-template/tree/permission-control)
-
-For `typescript` version, you can use [vue-typescript-admin-template](https://github.com/Armour/vue-typescript-admin-template) (Credits: [@Armour](https://github.com/Armour))
-
-## Related Project
-
-- [vue-element-admin](https://github.com/PanJiaChen/vue-element-admin)
-
-- [electron-vue-admin](https://github.com/PanJiaChen/electron-vue-admin)
-
-- [vue-typescript-admin-template](https://github.com/Armour/vue-typescript-admin-template)
-
-- [awesome-project](https://github.com/PanJiaChen/vue-element-admin/issues/2312)
+- [vue-element-admin 使用文档](https://panjiachen.github.io/vue-element-admin-site/zh/)
+- [ice-icestark 使用文档](https://micro-frontends.ice.work/)
 
 ## Browsers support
 
 Modern browsers and Internet Explorer 10+.
 
 | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt="IE / Edge" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>IE / Edge | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Firefox | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Chrome | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Safari |
-| --------- | --------- | --------- | --------- |
-| IE10, IE11, Edge| last 2 versions| last 2 versions| last 2 versions
-
-## License
-
-[MIT](https://github.com/PanJiaChen/vue-admin-template/blob/master/LICENSE) license.
-
-Copyright (c) 2017-present PanJiaChen
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| IE10, IE11, Edge                                                                                                                                                                                                | last 2 versions                                                                                                                                                                                                   | last 2 versions                                                                                                                                                                                               | last 2 versions                                                                                                                                                                                               |
