@@ -66,7 +66,10 @@ export default {
         //   'https:////iceworks.oss-cn-hangzhou.aliyuncs.com/icestark/child-seller-react/build/js/index.js',
         //   'https:////iceworks.oss-cn-hangzhou.aliyuncs.com/icestark/child-seller-react/build/css/index.css',
         // ],
-        entry: "http://localhost:3333/",
+        //本地环境调试运行地址
+        // entry: "http://localhost:3333/",
+        //打包构建于同一目录下路径
+        // entry: "/child/react/index.html",
         container
       },
       {
@@ -80,6 +83,7 @@ export default {
         //   'https:////iceworks.oss-cn-hangzhou.aliyuncs.com/icestark/child-waiter-vue/dist/css/app.css',
         // ],
         entry: "http://localhost:7101/",
+        // entry: "/child/vue/index.html",
         container
       }
     ]);
