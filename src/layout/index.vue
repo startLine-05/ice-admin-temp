@@ -57,7 +57,7 @@ export default {
     const container = document.getElementById("container");
     registerMicroApps([
       {
-        name: "Reaact微应用",
+        name: "react",
         activePath: "/react",
         title: "React微应用",
         sandbox: true,
@@ -73,7 +73,7 @@ export default {
         container
       },
       {
-        name: "Vue微应用",
+        name: "vue",
         activePath: "/vue",
         title: "Vue微应用",
         sandbox: true,
@@ -105,7 +105,7 @@ export default {
     });
   },
   beforeDestroy() {
-    removeMicroApps(["seller", "waiter"]);
+    removeMicroApps(["vue", "react"]);
   },
   methods: {
     handleClickOutside() {
