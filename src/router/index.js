@@ -206,7 +206,7 @@ export const constantRoutes = [
 
 const createRouter = () => new Router({
   mode: 'history', // require service support
-  base: '/startLine-05-ice-admin-temp',
+  base: process.env.BASE_URL,
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRoutes
 })

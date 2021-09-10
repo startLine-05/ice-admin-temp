@@ -14,7 +14,9 @@ const name = defaultSettings.title || "vue Admin Template"; // page title
 // You can change the port by the following methods:
 // port = 9528 npm run dev OR npm run dev --port = 9528
 const port = process.env.port || process.env.npm_config_port || 9528; // dev port
-
+// 部署目录
+const BASE_URL = process.env.NODE_ENV === 'production' ? '/startLine-05-ice-admin-temp/' : '/';
+const outputDir = process.env.NODE_ENV === 'production' ? 'docs' : 'dist';
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {
   /**
@@ -24,8 +26,8 @@ module.exports = {
    * In most cases please use '/' !!!
    * Detail: https://cli.vuejs.org/config/#publicpath
    */
-  publicPath: "/startLine-05-ice-admin-temp/",
-  outputDir: "startLine-05-ice-admin-temp",
+  publicPath: BASE_URL,
+  outputDir,
   assetsDir: "static",
   lintOnSave: process.env.NODE_ENV === "development",
   productionSourceMap: false,
