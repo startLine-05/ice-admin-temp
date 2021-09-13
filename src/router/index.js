@@ -150,7 +150,7 @@ export const constantRoutes = [
   },
 
   {
-    path: 'external-link',
+    path: '/external-link',
     component: Layout,
     children: [
       {
@@ -205,9 +205,8 @@ export const constantRoutes = [
 ]
 
 const createRouter = () => new Router({
-  // mode: 'history', // require service support
-  // base: '/startLine-05-ice-admin-temp/',
-  base: process.env.BASE_URL,
+  mode: 'history', // require service support
+  base:process.env.BASE_URL,
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRoutes
 })

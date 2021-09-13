@@ -25,13 +25,13 @@ export default {
   components: {
     Navbar,
     Sidebar,
-    AppMain
+    AppMain,
   },
   mixins: [ResizeMixin],
   data() {
     return {
       loading: false,
-      microAppsActive: false
+      microAppsActive: false,
     };
   },
   computed: {
@@ -49,16 +49,16 @@ export default {
         hideSidebar: !this.sidebar.opened,
         openSidebar: this.sidebar.opened,
         withoutAnimation: this.sidebar.withoutAnimation,
-        mobile: this.device === "mobile"
+        mobile: this.device === "mobile",
       };
-    }
+    },
   },
   mounted() {
     const container = document.getElementById("container");
     registerMicroApps([
       {
         name: "react",
-        activePath: "/react",
+        activePath: `${process.env.BASE_URL}react`,
         title: "React微应用",
         sandbox: true,
         // React app demo: https://github.com/alibaba-fusion/materials/tree/master/scaffolds/ice-stark-child
@@ -69,12 +69,12 @@ export default {
         //本地环境调试运行地址
         // entry: "http://localhost:3333/",
         //打包构建于同一目录下路径
-        entry: "/child/react/index.html",
-        container
+        entry: `${process.env.BASE_URL}child/react/index.html`,
+        container,
       },
       {
         name: "vue",
-        activePath: "/vue",
+        activePath: `${process.env.BASE_URL}vue`,
         title: "Vue微应用",
         sandbox: true,
         // Vue app demo: https://github.com/ice-lab/vue-materials/tree/master/scaffolds/icestark-child-app
@@ -83,11 +83,10 @@ export default {
         //   'https:////iceworks.oss-cn-hangzhou.aliyuncs.com/icestark/child-waiter-vue/dist/css/app.css',
         // ],
         // entry: "http://localhost:7101/",
-        entry: "/child/vue/index.html",
-        container
-      }
+        entry: `${process.env.BASE_URL}child/vue/index.html`,
+        container,
+      },
     ]);
-
     start({
       onLoadingApp: () => {
         this.loading = true;
@@ -97,11 +96,14 @@ export default {
       },
       // 处理微应用间跳转无法触发 Vue Router 响应
       onRouteChange: (_, pathname) => {
-        this.$router.push(pathname);
+        const nexTo = pathname.includes(process.env.BASE_URL)
+          ? `/${pathname.replace(process.env.BASE_URL, "")}`
+          : pathname;
+        this.$router.push(nexTo);
       },
-      onActiveApps: activeApps => {
+      onActiveApps: (activeApps) => {
         this.microAppsActive = (activeApps || []).length ? true : false;
-      }
+      },
     });
   },
   beforeDestroy() {
@@ -110,8 +112,8 @@ export default {
   methods: {
     handleClickOutside() {
       this.$store.dispatch("app/closeSideBar", { withoutAnimation: false });
-    }
-  }
+    },
+  },
 };
 </script>
 
