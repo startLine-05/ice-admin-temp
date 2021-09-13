@@ -1,6 +1,6 @@
 # icestark Vue 子应用
 
-icestark 基于 Vue 的子应用模板, 包含了 vue-2.0 + element-ui 这些主要库
+> icestark 基于 Vue 的子应用模板, 包含了 vue-2.0 + element-ui 这些主要库,可单独部署使用或结合主应用一同开发。
 
 ## Build Setup
 
