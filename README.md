@@ -208,7 +208,7 @@ npm run lint -- --fix
 
 - [vue-element-admin 使用文档](https://panjiachen.github.io/vue-element-admin-site/zh/)
 - [ice-icestark 使用文档](https://micro-frontends.ice.work/)
-
+- 更多部署路径配置信息可参考 Nginx 配置, 本项目默认配置了默认路径非根路径，可自行更改。
 ## Browsers support
 
 Modern browsers and Internet Explorer 10+.
